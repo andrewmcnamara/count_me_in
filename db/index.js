@@ -1,31 +1,31 @@
-var promise = require('bluebird');
+let promise = require('bluebird');
 
-var options = {
-  // Initialization Options
-  promiseLib: promise
+let options = {
+    // Initialization Options
+    promiseLib: promise
 };
 
-var pgp = require('pg-promise')(options);
-var connectionString = 'postgres://localhost:5432/count_me_in';
-var db = pgp(connectionString);
+let pgp = require('pg-promise')(options);
+let connectionString = 'postgres://localhost:5432/count_me_in';
+let db = pgp(connectionString);
 
 // add query functions
-function getAllClasses(req, res, next) {
-  db.any('select * from classes')
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved ALL classes'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
+function getAllClasses() {
+    return db.any('select * from classes');
+}
+
+
+function getAllParticipants() {
+    return db.any('select * from participants');
+}
+
+function addParticipant(data) {
+    return db.none("insert into participants(name,email) values(${name},${email})", data);
 }
 
 
 module.exports = {
-  getAllClasses: getAllClasses,
+    getAllClasses: getAllClasses,
+    getAllParticipants: getAllParticipants,
+    addParticipant: addParticipant
 };
